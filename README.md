@@ -3,11 +3,11 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: We continiously filter possible values by using various techniques such as elimination and only one match. Now we include the naked twins technique to improve our 'reduction' pipeline which should now be able to solve more complex sudoko.
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: 
 
 ### Install
 
