@@ -3,6 +3,8 @@ assignments = []
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
+#http://stackoverflow.com/questions/931092/reverse-a-string-in-python
+cols_reversed = cols[::-1]
 
 #a1->b1,b2,b3 / a2->b1,b2,b3 etc..
 def cross(a, b):
@@ -29,15 +31,26 @@ units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 #get the keys of the peers of each sudoku box
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
-diag1units=[]
-diag2units=[]
+#left to right diagonal
+lrdiag = []
 
+#right to left diagonal
+rldiag = []
 
-generate_diagonal():
+def generate_diagonals():
     """Generates the diagonals
     which are used in the diagonal sudokos
     """
-    pass
+    for i in range(0, len(rows)):
+        lrdiag.append(rows[i] + cols[i])
+
+    for i in range(0, len(rows)):
+        rldiag.append(rows[i] + cols_reversed[i])
+
+
+#generate the diagonals
+generate_diagonals()
+
 
 def assign_value(values, box, value):
     """Please use this function to update your values dictionary!
