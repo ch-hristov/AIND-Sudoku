@@ -109,6 +109,11 @@ def display(values):
         if r in 'CF': print(line)
 
 def eliminate(values):
+    """
+    If a single box is already solved then it's peers cannot contain the
+    value which is present in the box, so remove that value from all 
+    the peers of the box
+    """
     solved_values = [box for box in values.keys() if len(values[box]) == 1]
     for box in solved_values:
         digit = values[box]
@@ -117,6 +122,9 @@ def eliminate(values):
     return values
 
 def only_choice(values):
+    """
+    If there's only one choice
+    """
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
@@ -126,7 +134,7 @@ def only_choice(values):
 
 def reduce_puzzle(values):
     """
-    Iterate eliminate() and only_choice(). If at some point, there is a box with no available values,
+    Iterate eliminate() and only_choice().If at some point, there is a box with no available values,
     return False.
     If the sudoku is solved, return the sudoku.
     If after an iteration of both functions, the sudoku remains the same, return the sudoku.
@@ -136,9 +144,11 @@ def reduce_puzzle(values):
     stalled = False
     while not stalled:
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
+
         values = eliminate(values)
         values = only_choice(values)
         values = naked_twins(values)
+
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         stalled = solved_values_before == solved_values_after
         if len([box for box in values.keys() if len(values[box]) == 0]):
