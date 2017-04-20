@@ -25,8 +25,7 @@ units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
 def assign_value(values, box, value):
-    """
-    Please use this function to update your values dictionary!
+    """Please use this function to update your values dictionary!
     Assigns a value to a given box. If it updates the board record it.
     """
     # Don't waste memory appending actions that don't actually change any values
@@ -95,11 +94,11 @@ def grid_values(grid):
     return dict(zip(boxes, chars))
 
 def display(values):
-    """
-    Display the values as a 2-D grid.
+    """Display the values as a 2-D grid.
     Input: The sudoku in dictionary form
     Output: None
     """
+
     width = 1+max(len(values[s]) for s in boxes)
 
     line = '+'.join(['-'*(width*3)]*3)
@@ -109,32 +108,29 @@ def display(values):
         if r in 'CF': print(line)
 
 def eliminate(values):
-    """
-    If a single box is already solved then it's peers cannot contain the
-    value which is present in the box, so remove that value from all 
+    """If a single box is already solved then it's peers cannot contain the
+    value which is present in the box, so remove that value from all
     the peers of the box
     """
     solved_values = [box for box in values.keys() if len(values[box]) == 1]
     for box in solved_values:
         digit = values[box]
         for peer in peers[box]:
-            values[peer] = values[peer].replace(digit, '')
+            values = assign_value(values, peer, values[peer].replace(digit, ''))
     return values
 
 def only_choice(values):
-    """
-    If there's only one choice
+    """If there's only one choice
     """
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
             if len(dplaces) == 1:
-                values[dplaces[0]] = digit
+                values = assign_value(values, dplaces[0], digit)
     return values
 
 def reduce_puzzle(values):
-    """
-    Iterate eliminate() and only_choice().If at some point, there is a box with no available values,
+    """Iterate eliminate() and only_choice().If at some point, there is a box with no available values,
     return False.
     If the sudoku is solved, return the sudoku.
     If after an iteration of both functions, the sudoku remains the same, return the sudoku.
@@ -171,11 +167,10 @@ def search(values):
         new_sudoku[s] = value
         attempt = search(new_sudoku)
         if attempt:
-            return True #make this explicit
+            return attempt #make this explicit
 
 def solve(grid):
-    """
-    Find the solution to a Sudoku grid.
+    """Find the solution to a Sudoku grid.
     Args:
         grid(string): a string representing a sudoku grid.
             Example: '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
@@ -184,6 +179,7 @@ def solve(grid):
     """
     dict_grid = grid_values(grid)
     result_grid = search(dict_grid)
+
     return result_grid
     
 if __name__ == '__main__':
@@ -192,9 +188,8 @@ if __name__ == '__main__':
     display(solve(diag_sudoku_grid))
 
     try:
-        #from visualize import visualize_assignments
-        #visualize_assignments(assignments)
-        print('\n')
+        from visualize import visualize_assignments
+        visualize_assignments(assignments)
     except SystemExit:
         pass
     except:
