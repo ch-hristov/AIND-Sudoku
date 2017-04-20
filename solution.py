@@ -25,12 +25,6 @@ square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','45
 #build the full grid
 unitlist = row_units + column_units + square_units
 
-#get the keys of the sudoku boxes in the different boxes
-units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
-
-#get the keys of the peers of each sudoku box
-peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
-
 #left to right diagonal
 lrdiag = []
 
@@ -46,6 +40,22 @@ def generate_diagonals():
 
     for i in range(0, len(rows)):
         rldiag.append(rows[i] + cols_reversed[i])
+
+
+#this flag marks whether to sudoku is diagonal or vertical
+is_diagonal = True
+
+#if the sudoku is diagonal add the two diagonals to be later considered
+if is_diagonal:
+    unitlist.append(rldiag)
+    unitlist.append(lrdiag)
+
+#build a dictionary which contains the box in which the node is present
+units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
+
+#get the keys of the peers of each sudoku box
+peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
+
 
 
 #generate the diagonals
@@ -155,7 +165,8 @@ def only_choice(values):
     return values
 
 def reduce_puzzle(values):
-    """Iterate eliminate() and only_choice().If at some point, there is a box with no available values,
+    """Iterate eliminate() and only_choice().
+    If at some point, there is a box with no available values,
     return False.
     If the sudoku is solved, return the sudoku.
     If after an iteration of both functions, the sudoku remains the same, return the sudoku.

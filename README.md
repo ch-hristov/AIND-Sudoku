@@ -7,7 +7,7 @@ A: We continiously filter possible values by using various techniques such as el
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: 
+A: In order to solve the diagonal sudoku problem we add the two diagonals as additional constraint by adding them to the unitlist list. By doing this each box, we treat the diagonal the way we treat the squares.
 
 ### Install
 
