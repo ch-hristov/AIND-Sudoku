@@ -49,15 +49,16 @@ def naked_twins(values):
         the values dictionary with the naked twins eliminated from peers.
     """
 
-    #get all possible pairs which have length 2
-    possible_nodes = [item for item in values.keys() if len(values[item]) == 2]
+    #get all possible boxes which have length 2
+    possible_node_keys = [item for item in values.keys() if len(values[item]) == 2]
+
     naked_twins_nodes = []
 
     #get all possible boxes which are peers to one another
     #and are part of the possible nodes array
-    for box in possible_nodes:
+    for box in possible_node_keys:
         for peer in peers[box]:
-            if peer in possible_nodes and values[peer] == values[box]:
+            if peer in possible_node_keys and values[peer] == values[box]:
                 naked_twins_nodes.append((box, peer))
 
     #remove both values from all the peers which are
@@ -65,13 +66,24 @@ def naked_twins(values):
     for twins in naked_twins_nodes:
         box1 = twins[0]
         box2 = twins[1]
-        for peer_key in peers[box1].union(peers[box2]):
+        #get the intersecting nodes
+        all_update_peers = peers[box1] & peers[box2]
+        for peer_key in all_update_peers:
             if len(values[peer_key]) > 2:
                 for remove in values[box1]:
+                    #replace continiously to see the results
                     values = assign_value(values, peer_key, values[peer_key].replace(remove, ''))
     return values
 
 def grid_values(grid):
+    """Convert grid string into {<box>: <value>} dict with '123456789' value for empties.
+    Args:
+        grid: Sudoku grid in string form, 81 characters long
+    Returns:
+        Sudoku grid in dictionary form:
+        - keys: Box labels, e.g. 'A1'
+        - values: Value in corresponding box, e.g. '8', or '123456789' if it is empty.
+    """
     chars = []
     digits = '123456789'
     for c in grid:
@@ -161,7 +173,7 @@ def solve(grid):
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
     dict_grid = grid_values(grid)
-    result_grid = reduce_puzzle(dict_grid)
+    result_grid = search(dict_grid)
     return result_grid
     
 if __name__ == '__main__':
@@ -172,7 +184,7 @@ if __name__ == '__main__':
     try:
         #from visualize import visualize_assignments
         #visualize_assignments(assignments)
-        print('gg')
+        print('\n')
     except SystemExit:
         pass
     except:
