@@ -1,8 +1,10 @@
+#contains items for visualization
 assignments = []
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
 
+#a1->b1,b2,b3 / a2->b1,b2,b3 etc..
 def cross(a, b):
     return [s+t for s in a for t in b]
 
@@ -21,8 +23,21 @@ square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','45
 #build the full grid
 unitlist = row_units + column_units + square_units
 
+#get the keys of the sudoku boxes in the different boxes
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
+
+#get the keys of the peers of each sudoku box
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
+
+diag1units=[]
+diag2units=[]
+
+
+generate_diagonal():
+    """Generates the diagonals
+    which are used in the diagonal sudokos
+    """
+    pass
 
 def assign_value(values, box, value):
     """Please use this function to update your values dictionary!
@@ -39,7 +54,6 @@ def assign_value(values, box, value):
     return values
 
 def naked_twins(values):
-
     """Eliminate values using the naked twins strategy.
     Args:
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
@@ -47,10 +61,8 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
-
     #get all possible boxes which have length 2
     possible_node_keys = [item for item in values.keys() if len(values[item]) == 2]
-
     naked_twins_nodes = []
 
     #get all possible boxes which are peers to one another
@@ -65,7 +77,7 @@ def naked_twins(values):
     for twins in naked_twins_nodes:
         box1 = twins[0]
         box2 = twins[1]
-        #get the intersecting nodes
+        #get the intersecting peers
         all_update_peers = peers[box1] & peers[box2]
         for peer_key in all_update_peers:
             if len(values[peer_key]) > 2:
@@ -147,8 +159,10 @@ def reduce_puzzle(values):
 
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         stalled = solved_values_before == solved_values_after
+
         if len([box for box in values.keys() if len(values[box]) == 0]):
             return False
+
     return values
 
 def search(values):
@@ -161,13 +175,13 @@ def search(values):
         return values ## Solved!
     # Choose one of the unfilled squares with the fewest possibilities
     n,s = min((len(values[s]), s) for s in boxes if len(values[s]) > 1)
-    # Now use recurrence to solve each one of the resulting sudokus, and 
+    # Now use recurrence to solve each one of the resulting sudokus, and
     for value in values[s]:
         new_sudoku = values.copy()
         new_sudoku[s] = value
         attempt = search(new_sudoku)
         if attempt:
-            return attempt #make this explicit
+            return attempt
 
 def solve(grid):
     """Find the solution to a Sudoku grid.
