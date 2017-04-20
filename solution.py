@@ -40,6 +40,7 @@ def assign_value(values, box, value):
     return values
 
 def naked_twins(values):
+
     """Eliminate values using the naked twins strategy.
     Args:
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
@@ -47,6 +48,7 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
+
     #get all possible pairs which have length 2
     possible_nodes = [item for item in values.keys() if len(values[item]) == 2]
     naked_twins_nodes = []
@@ -58,16 +60,15 @@ def naked_twins(values):
             if peer in possible_nodes and values[peer] == values[box]:
                 naked_twins_nodes.append((box, peer))
 
-    #remove both values from all the peers
-    #of the boxes
+    #remove both values from all the peers which are
+    #part of the peers of both the boxes
     for twins in naked_twins_nodes:
         box1 = twins[0]
         box2 = twins[1]
-        to_remove = values[box1]
-            
         for peer_key in peers[box1].union(peers[box2]):
-            values = assign_value(values, peer_key, values[peer_key].replace(to_remove, ''))
-
+            if len(values[peer_key]) > 2:
+                for remove in values[box1]:
+                    values = assign_value(values, peer_key, values[peer_key].replace(remove, ''))
     return values
 
 def grid_values(grid):
@@ -120,15 +121,12 @@ def reduce_puzzle(values):
     Input: A sudoku in dictionary form.
     Output: The resulting sudoku in dictionary form.
     """
-    solved_values = [box for box in values.keys() if len(values[box]) == 1]
     stalled = False
     while not stalled:
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
-        
-        values = naked_twins(values)
         values = eliminate(values)
         values = only_choice(values)
-
+        values = naked_twins(values)
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         stalled = solved_values_before == solved_values_after
         if len([box for box in values.keys() if len(values[box]) == 0]):
